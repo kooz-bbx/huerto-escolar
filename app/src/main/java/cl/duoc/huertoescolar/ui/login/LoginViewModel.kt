@@ -3,16 +3,30 @@ package cl.duoc.huertoescolar.ui.login
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import cl.duoc.huertoescolar.data.DatosPrueba
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import cl.duoc.huertoescolar.data.Sesion
+import cl.duoc.huertoescolar.data.local.HuertoDatabase
 import cl.duoc.huertoescolar.data.modelo.EstadoCuenta
 import cl.duoc.huertoescolar.data.modelo.Perfil
+import cl.duoc.huertoescolar.data.repositorio.HuertoRepositorio
 import cl.duoc.huertoescolar.domain.esClaveValida
 import cl.duoc.huertoescolar.domain.esCampoVacio
 import cl.duoc.huertoescolar.domain.esUsuarioValido
+import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+// AndroidViewModel: igual que ViewModel, pero recibe "application" para poder abrir la base de datos
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repositorio = HuertoRepositorio(HuertoDatabase.obtener(application))
+
+    init {
+        // La primera vez que se abre la app, carga los datos ficticios en Room
+        viewModelScope.launch {
+            repositorio.cargarDatosIniciales()
+        }
+    }
 
     // Estado del formulario (la pantalla solo lo lee)
     var usuario by mutableStateOf("")
@@ -60,19 +74,20 @@ class LoginViewModel : ViewModel() {
     fun iniciarSesion(onExito: (Perfil) -> Unit) {
         if (!validarFormulario()) return
 
-        val encontrado = DatosPrueba.usuarios.find {
-            it.usuario == usuario.trim().lowercase() && it.clave == clave
-        }
+        // La consulta a Room se hace en una corrutina (no bloquea la pantalla)
+        viewModelScope.launch {
+            val encontrado = repositorio.buscarUsuario(usuario.trim().lowercase(), clave)
 
-        when {
-            encontrado == null -> mensajeError = "Usuario o clave incorrectos"
-            encontrado.estadoCuenta == EstadoCuenta.INACTIVA ->
-                mensajeError = "Tu cuenta está inactiva. Habla con tu docente."
-            else -> {
-                Sesion.iniciar(encontrado)
-                usuario = ""
-                clave = ""
-                onExito(encontrado.perfil)
+            when {
+                encontrado == null -> mensajeError = "Usuario o clave incorrectos"
+                encontrado.estadoCuenta == EstadoCuenta.INACTIVA ->
+                    mensajeError = "Tu cuenta está inactiva. Habla con tu docente."
+                else -> {
+                    Sesion.iniciar(encontrado)
+                    usuario = ""
+                    clave = ""
+                    onExito(encontrado.perfil)
+                }
             }
         }
     }

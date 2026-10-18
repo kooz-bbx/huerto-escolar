@@ -44,12 +44,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.huertoescolar.data.modelo.Perfil
 import cl.duoc.huertoescolar.ui.componentes.CampoTexto
-import cl.duoc.huertoescolar.ui.theme.HuertoEscolarTheme
 
 @Composable
 fun LoginScreen(
@@ -178,13 +176,5 @@ fun LoginScreen(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLogin() {
-    HuertoEscolarTheme {
-        LoginScreen(onIngresoAdmin = {}, onIngresoEstudiante = {})
     }
 }
