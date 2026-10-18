@@ -14,19 +14,27 @@ Permite organizar los sectores y cultivos del huerto, asignar tareas a estudiant
 - Kotlin + Jetpack Compose
 - Material Design 3
 - Navigation Compose
-- Arquitectura MVVM (ViewModel + estado con `mutableStateOf`)
+- Arquitectura MVVM: UI (Compose) → ViewModel (StateFlow) → Repositorio → Room
 - Room (persistencia local) con KSP
+- Coil (carga de imágenes) y FileProvider (cámara)
 
 ## 📌 Estado del avance
 - [x] Proyecto base y tema visual (Material 3)
 - [x] Inicio de sesión con validación de campos
 - [x] Navegación según perfil (administrador / estudiante)
 - [x] Persistencia local con Room (usuarios, sectores y cultivos)
-- [x] Sectores: listar, crear, modificar y cambiar estado (formulario validado)
-- [x] Cultivos: registrar, asociar a sector, fechas, riego y estado (formulario validado)
+- [x] Sectores: listar, ver detalle con sus cultivos, crear, modificar, cambiar estado y eliminar
+- [x] Cultivos: registrar, asociar a sector, fechas, riego, estado y eliminar
 - [x] Control de acceso: solo administradores crean o modifican sectores y cultivos
-- [ ] Módulos de tareas, problemas, alertas, sensores e historial
-- [ ] Recursos nativos (cámara y notificaciones)
+- [x] Tareas: crear, editar, eliminar y asignar a estudiante o grupo; filtros por estado y responsable
+- [x] Flujo: Pendiente → En desarrollo → Pendiente de validación → Validada / Rechazada
+- [x] Estudiante: inicia la tarea y la entrega con foto y comentario (tabla Evidencia)
+- [x] Docente: aprueba o rechaza con motivo obligatorio (tabla Validacion: quién, cuándo y resultado)
+- [x] Modelo relacional con claves foráneas: Usuario, Sector, Cultivo, Tarea, Evidencia, Validacion
+- [x] Recurso nativo 1: cámara (TakePicture + FileProvider) y galería (PhotoPicker)
+- [x] Animaciones: transiciones entre pantallas, chips de estado, foto y listas
+- [ ] Problemas, alertas, sensores simulados e historial
+- [ ] Recurso nativo 2: notificaciones locales
 
 ## ▶️ Cómo ejecutar
 1. Clonar el repositorio: `git clone <url-del-repo>`

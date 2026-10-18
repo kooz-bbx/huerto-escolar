@@ -1,5 +1,10 @@
 package cl.duoc.huertoescolar.navegacion
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -13,8 +18,15 @@ import cl.duoc.huertoescolar.ui.cultivos.CultivosScreen
 import cl.duoc.huertoescolar.ui.inicio.InicioAdminScreen
 import cl.duoc.huertoescolar.ui.inicio.InicioEstudianteScreen
 import cl.duoc.huertoescolar.ui.login.LoginScreen
+import cl.duoc.huertoescolar.ui.sectores.SectorDetalleScreen
 import cl.duoc.huertoescolar.ui.sectores.SectorFormScreen
 import cl.duoc.huertoescolar.ui.sectores.SectoresScreen
+import cl.duoc.huertoescolar.ui.tareas.TareaDetalleScreen
+import cl.duoc.huertoescolar.ui.tareas.TareaFormScreen
+import cl.duoc.huertoescolar.ui.tareas.TareasScreen
+
+// Argumento "id" (número) que usan las rutas de detalle y formularios
+private val argumentoId = listOf(navArgument("id") { type = NavType.IntType })
 
 @Composable
 fun AppNavegacion() {
@@ -23,7 +35,12 @@ fun AppNavegacion() {
 
     NavHost(
         navController = navController,
-        startDestination = Rutas.LOGIN
+        startDestination = Rutas.LOGIN,
+        // Animaciones al cambiar de pantalla: la nueva entra deslizándose desde la derecha
+        enterTransition = { slideInHorizontally(tween(350)) { ancho -> ancho } + fadeIn(tween(350)) },
+        exitTransition = { fadeOut(tween(250)) },
+        popEnterTransition = { fadeIn(tween(250)) },
+        popExitTransition = { slideOutHorizontally(tween(350)) { ancho -> ancho } + fadeOut(tween(350)) }
     ) {
         composable(Rutas.LOGIN) {
             LoginScreen(
@@ -35,11 +52,13 @@ fun AppNavegacion() {
             InicioAdminScreen(
                 onIrSectores = { navController.navigate(Rutas.SECTORES) },
                 onIrCultivos = { navController.navigate(Rutas.CULTIVOS) },
+                onIrTareas = { navController.navigate(Rutas.TAREAS) },
                 onCerrarSesion = { cerrarSesion(navController) }
             )
         }
         composable(Rutas.INICIO_ESTUDIANTE) {
             InicioEstudianteScreen(
+                onVerTarea = { id -> navController.navigate(Rutas.tareaDetalle(id)) },
                 onCerrarSesion = { cerrarSesion(navController) }
             )
         }
@@ -49,13 +68,17 @@ fun AppNavegacion() {
             SectoresScreen(
                 onVolver = volver,
                 onNuevoSector = { navController.navigate(Rutas.sectorForm(0)) },
-                onEditarSector = { id -> navController.navigate(Rutas.sectorForm(id)) }
+                onVerSector = { id -> navController.navigate(Rutas.sectorDetalle(id)) }
             )
         }
-        composable(
-            route = Rutas.SECTOR_FORM,
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
-        ) { entrada ->
+        composable(Rutas.SECTOR_DETALLE, arguments = argumentoId) {
+            SectorDetalleScreen(
+                onVolver = volver,
+                onEditarSector = { id -> navController.navigate(Rutas.sectorForm(id)) },
+                onVerCultivo = { id -> navController.navigate(Rutas.cultivoForm(id)) }
+            )
+        }
+        composable(Rutas.SECTOR_FORM, arguments = argumentoId) { entrada ->
             SectorFormScreen(
                 idSector = entrada.arguments?.getInt("id") ?: 0,
                 onVolver = volver
@@ -70,13 +93,31 @@ fun AppNavegacion() {
                 onEditarCultivo = { id -> navController.navigate(Rutas.cultivoForm(id)) }
             )
         }
-        composable(
-            route = Rutas.CULTIVO_FORM,
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
-        ) { entrada ->
+        composable(Rutas.CULTIVO_FORM, arguments = argumentoId) { entrada ->
             CultivoFormScreen(
                 idCultivo = entrada.arguments?.getInt("id") ?: 0,
                 onVolver = volver
+            )
+        }
+
+        // ---------- Tareas ----------
+        composable(Rutas.TAREAS) {
+            TareasScreen(
+                onVolver = volver,
+                onNuevaTarea = { navController.navigate(Rutas.tareaForm(0)) },
+                onVerTarea = { id -> navController.navigate(Rutas.tareaDetalle(id)) }
+            )
+        }
+        composable(Rutas.TAREA_FORM, arguments = argumentoId) { entrada ->
+            TareaFormScreen(
+                idTarea = entrada.arguments?.getInt("id") ?: 0,
+                onVolver = volver
+            )
+        }
+        composable(Rutas.TAREA_DETALLE, arguments = argumentoId) {
+            TareaDetalleScreen(
+                onVolver = volver,
+                onEditarTarea = { id -> navController.navigate(Rutas.tareaForm(id)) }
             )
         }
     }

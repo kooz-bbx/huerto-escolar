@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Yard
@@ -39,13 +40,15 @@ data class OpcionMenu(
 fun InicioAdminScreen(
     onIrSectores: () -> Unit,
     onIrCultivos: () -> Unit,
+    onIrTareas: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     val usuario = Sesion.usuarioActual
 
     val opciones = listOf(
         OpcionMenu("Sectores", "Bancales y zonas del huerto", Icons.Filled.Yard, onIrSectores),
-        OpcionMenu("Cultivos", "Siembra, riego y cosecha", Icons.Filled.Eco, onIrCultivos)
+        OpcionMenu("Cultivos", "Siembra, riego y cosecha", Icons.Filled.Eco, onIrCultivos),
+        OpcionMenu("Tareas", "Asignar, revisar y validar", Icons.AutoMirrored.Filled.Assignment, onIrTareas)
     )
 
     Scaffold(
@@ -74,7 +77,8 @@ fun InicioAdminScreen(
             Text("¿Qué quieres revisar hoy?", style = MaterialTheme.typography.titleMedium)
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                // Adaptive: 2 columnas en celular, más en tablet
+                columns = GridCells.Adaptive(minSize = 150.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -95,6 +99,6 @@ fun InicioAdminScreen(
 @Composable
 fun PreviewInicioAdmin() {
     HuertoEscolarTheme {
-        InicioAdminScreen(onIrSectores = {}, onIrCultivos = {}, onCerrarSesion = {})
+        InicioAdminScreen(onIrSectores = {}, onIrCultivos = {}, onIrTareas = {}, onCerrarSesion = {})
     }
 }
