@@ -41,3 +41,9 @@ fun esFrecuenciaRiegoValida(texto: String): Boolean {
     val dias = texto.trim().toIntOrNull() ?: return false
     return dias in 1..30
 }
+
+// La fecha programada de una tarea no puede ser anterior a hoy
+fun esFechaHoyOFutura(fecha: String): Boolean {
+    return esFechaPosteriorOIgual(fechaHoy(), fecha)
+}
+
