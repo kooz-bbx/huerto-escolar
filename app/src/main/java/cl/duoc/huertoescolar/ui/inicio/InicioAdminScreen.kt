@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Yard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,12 +38,14 @@ data class OpcionMenu(
 @Composable
 fun InicioAdminScreen(
     onIrSectores: () -> Unit,
+    onIrCultivos: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     val usuario = Sesion.usuarioActual
 
     val opciones = listOf(
-        OpcionMenu("Sectores", "Bancales y zonas del huerto", Icons.Filled.Yard, onIrSectores)
+        OpcionMenu("Sectores", "Bancales y zonas del huerto", Icons.Filled.Yard, onIrSectores),
+        OpcionMenu("Cultivos", "Siembra, riego y cosecha", Icons.Filled.Eco, onIrCultivos)
     )
 
     Scaffold(
@@ -92,6 +95,6 @@ fun InicioAdminScreen(
 @Composable
 fun PreviewInicioAdmin() {
     HuertoEscolarTheme {
-        InicioAdminScreen(onIrSectores = {}, onCerrarSesion = {})
+        InicioAdminScreen(onIrSectores = {}, onIrCultivos = {}, onCerrarSesion = {})
     }
 }
