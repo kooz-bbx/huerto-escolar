@@ -44,6 +44,10 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     var mensajeError by mutableStateOf<String?>(null)
         private set
 
+    // true mientras se consulta la base de datos (muestra la ruedita en el botón)
+    var cargando by mutableStateOf(false)
+        private set
+
     fun cambiarUsuario(valor: String) {
         usuario = valor
         errorUsuario = null
@@ -72,11 +76,13 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     // Si todo está bien, guarda la sesión y avisa el perfil para navegar
     fun iniciarSesion(onExito: (Perfil) -> Unit) {
-        if (!validarFormulario()) return
+        if (!validarFormulario() || cargando) return
 
         // La consulta a Room se hace en una corrutina (no bloquea la pantalla)
         viewModelScope.launch {
+            cargando = true
             val encontrado = repositorio.buscarUsuario(usuario.trim().lowercase(), clave)
+            cargando = false
 
             when {
                 encontrado == null -> mensajeError = "Usuario o clave incorrectos"
