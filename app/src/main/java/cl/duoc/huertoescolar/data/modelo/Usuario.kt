@@ -1,5 +1,8 @@
 package cl.duoc.huertoescolar.data.modelo
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 // Perfiles de la app. El docente y el tallerista comparten el perfil ADMINISTRADOR
 enum class Perfil(val etiqueta: String) {
     ADMINISTRADOR("Administrador"),
@@ -12,7 +15,9 @@ enum class EstadoCuenta(val etiqueta: String) {
 }
 
 // Todos los usuarios son ficticios (regla del caso: nada de datos reales)
+@Entity(tableName = "usuarios")
 data class Usuario(
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val nombre: String,
     val usuario: String,
