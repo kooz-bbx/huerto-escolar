@@ -5,15 +5,24 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import cl.duoc.huertoescolar.data.dao.CultivoDao
+import cl.duoc.huertoescolar.data.dao.EvidenciaDao
 import cl.duoc.huertoescolar.data.dao.SectorDao
+import cl.duoc.huertoescolar.data.dao.TareaDao
 import cl.duoc.huertoescolar.data.dao.UsuarioDao
+import cl.duoc.huertoescolar.data.dao.ValidacionDao
 import cl.duoc.huertoescolar.data.modelo.Cultivo
+import cl.duoc.huertoescolar.data.modelo.Evidencia
 import cl.duoc.huertoescolar.data.modelo.Sector
+import cl.duoc.huertoescolar.data.modelo.Tarea
 import cl.duoc.huertoescolar.data.modelo.Usuario
+import cl.duoc.huertoescolar.data.modelo.Validacion
 
 @Database(
-    entities = [Usuario::class, Sector::class, Cultivo::class],
-    version = 1,
+    entities = [
+        Usuario::class, Sector::class, Cultivo::class,
+        Tarea::class, Evidencia::class, Validacion::class
+    ],
+    version = 2,   // v2: tareas, evidencias, validaciones y claves foráneas
     exportSchema = false
 )
 abstract class HuertoDatabase : RoomDatabase() {
@@ -21,6 +30,9 @@ abstract class HuertoDatabase : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
     abstract fun sectorDao(): SectorDao
     abstract fun cultivoDao(): CultivoDao
+    abstract fun tareaDao(): TareaDao
+    abstract fun evidenciaDao(): EvidenciaDao
+    abstract fun validacionDao(): ValidacionDao
 
     companion object {
         // Una sola instancia de la base de datos para toda la app (patrón Singleton)

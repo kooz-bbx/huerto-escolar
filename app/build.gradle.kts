@@ -64,4 +64,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    // Coil: mostrar fotos desde una Uri (igual que en FotoMotion)
+    implementation(libs.coil.compose)
 }

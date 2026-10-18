@@ -1,6 +1,8 @@
 package cl.duoc.huertoescolar.data.modelo
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 enum class EstadoCultivo(val etiqueta: String) {
@@ -13,8 +15,20 @@ enum class EstadoCultivo(val etiqueta: String) {
     FINALIZADO("Finalizado")
 }
 
-// Cada cultivo pertenece a un sector (sectorId)
-@Entity(tableName = "cultivos")
+// Cada cultivo pertenece a un sector (clave foránea sectorId → sectores.id).
+// RESTRICT: no se puede borrar un sector que todavía tiene cultivos.
+@Entity(
+    tableName = "cultivos",
+    foreignKeys = [
+        ForeignKey(
+            entity = Sector::class,
+            parentColumns = ["id"],
+            childColumns = ["sectorId"],
+            onDelete = ForeignKey.RESTRICT
+        )
+    ],
+    indices = [Index("sectorId")]
+)
 data class Cultivo(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

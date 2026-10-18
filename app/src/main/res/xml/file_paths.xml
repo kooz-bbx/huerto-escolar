@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        A diferencia de FotoMotion (cache-path), usamos files-path:
+        la carpeta "cache" Android la puede borrar cuando quiera, y aquí las fotos
+        son evidencia que el docente revisa después, así que deben quedar guardadas.
+    -->
+    <files-path
+        name="fotos"
+        path="fotos/" />
+</paths>

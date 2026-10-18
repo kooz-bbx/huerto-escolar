@@ -1,6 +1,8 @@
 package cl.duoc.huertoescolar.data.modelo
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 enum class EstadoSector(val etiqueta: String) {
@@ -10,7 +12,18 @@ enum class EstadoSector(val etiqueta: String) {
     FUERA_DE_USO("Fuera de uso")
 }
 
-@Entity(tableName = "sectores")
+// Clave foránea: el responsable del sector es un usuario que existe
+@Entity(
+    tableName = "sectores",
+    foreignKeys = [
+        ForeignKey(
+            entity = Usuario::class,
+            parentColumns = ["id"],
+            childColumns = ["responsableId"]
+        )
+    ],
+    indices = [Index("responsableId"), Index(value = ["codigo"], unique = true)]
+)
 data class Sector(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

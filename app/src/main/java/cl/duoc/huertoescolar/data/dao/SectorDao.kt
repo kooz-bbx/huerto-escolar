@@ -1,8 +1,8 @@
 package cl.duoc.huertoescolar.data.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import cl.duoc.huertoescolar.data.modelo.Sector
@@ -16,17 +16,23 @@ interface SectorDao {
     fun obtenerTodos(): Flow<List<Sector>>
 
     @Query("SELECT * FROM sectores WHERE id = :id")
+    fun observarPorId(id: Int): Flow<Sector?>
+
+    @Query("SELECT * FROM sectores WHERE id = :id")
     suspend fun obtenerPorId(id: Int): Sector?
 
     @Query("SELECT COUNT(*) FROM sectores WHERE codigo = :codigo AND id != :idActual")
     suspend fun contarPorCodigo(codigo: String, idActual: Int): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertar(sector: Sector)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertarTodos(sectores: List<Sector>)
 
     @Update
     suspend fun actualizar(sector: Sector)
+
+    @Delete
+    suspend fun eliminar(sector: Sector)
 }
