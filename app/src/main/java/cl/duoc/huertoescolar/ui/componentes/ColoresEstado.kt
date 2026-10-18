@@ -1,10 +1,12 @@
 package cl.duoc.huertoescolar.ui.componentes
 
 import androidx.compose.ui.graphics.Color
+import cl.duoc.huertoescolar.data.modelo.EstadoCultivo
 import cl.duoc.huertoescolar.data.modelo.EstadoSector
 import cl.duoc.huertoescolar.ui.theme.EstadoAviso
 import cl.duoc.huertoescolar.ui.theme.EstadoError
 import cl.duoc.huertoescolar.ui.theme.EstadoInfo
+import cl.duoc.huertoescolar.ui.theme.EstadoNeutro
 import cl.duoc.huertoescolar.ui.theme.EstadoOk
 
 // Un color para cada estado, así se reconocen de un vistazo
@@ -14,5 +16,17 @@ fun colorEstadoSector(estado: EstadoSector): Color {
         EstadoSector.EN_USO -> EstadoInfo
         EstadoSector.EN_MANTENIMIENTO -> EstadoAviso
         EstadoSector.FUERA_DE_USO -> EstadoError
+    }
+}
+
+fun colorEstadoCultivo(estado: EstadoCultivo): Color {
+    return when (estado) {
+        EstadoCultivo.PLANIFICADO -> EstadoNeutro
+        EstadoCultivo.SEMBRADO -> EstadoInfo
+        EstadoCultivo.EN_CRECIMIENTO -> EstadoOk
+        EstadoCultivo.LISTO_PARA_COSECHAR -> EstadoAviso
+        EstadoCultivo.COSECHADO -> EstadoOk
+        EstadoCultivo.CON_PROBLEMAS -> EstadoError
+        EstadoCultivo.FINALIZADO -> EstadoNeutro
     }
 }
