@@ -16,7 +16,9 @@ import cl.duoc.huertoescolar.domain.esFechaPosteriorOIgual
 import cl.duoc.huertoescolar.domain.esFechaValida
 import cl.duoc.huertoescolar.domain.esFrecuenciaRiegoValida
 import cl.duoc.huertoescolar.domain.tieneLargoMinimo
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 // Crear (id = 0) o modificar un cultivo, incluido su estado de desarrollo
@@ -24,9 +26,11 @@ class CultivoFormViewModel(application: Application) : AndroidViewModel(applicat
 
     private val repositorio = HuertoRepositorio(HuertoDatabase.obtener(application))
     private var idCultivo = 0
+    private var cultivoOriginal: Cultivo? = null
     private var yaCargado = false
 
-    val sectores: Flow<List<Sector>> = repositorio.obtenerSectores()
+    val sectores: StateFlow<List<Sector>> = repositorio.obtenerSectores()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     var esEdicion by mutableStateOf(false)
         private set
@@ -70,6 +74,7 @@ class CultivoFormViewModel(application: Application) : AndroidViewModel(applicat
 
         viewModelScope.launch {
             val cultivo = repositorio.obtenerCultivo(id) ?: return@launch
+            cultivoOriginal = cultivo
             idCultivo = cultivo.id
             esEdicion = true
             nombre = cultivo.nombre
@@ -146,6 +151,14 @@ class CultivoFormViewModel(application: Application) : AndroidViewModel(applicat
             )
             repositorio.guardarCultivo(cultivo)
             onGuardado()
+        }
+    }
+
+    // Eliminar (solo al editar). Las tareas de este cultivo quedan sin cultivo (SET_NULL)
+    fun eliminar(onResultado: (Boolean) -> Unit) {
+        val actual = cultivoOriginal ?: return
+        viewModelScope.launch {
+            onResultado(repositorio.eliminarCultivo(actual))
         }
     }
 }

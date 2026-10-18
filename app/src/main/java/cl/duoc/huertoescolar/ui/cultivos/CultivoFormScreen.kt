@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.EditNote
@@ -21,6 +22,9 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,6 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -35,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.huertoescolar.data.modelo.EstadoCultivo
 import cl.duoc.huertoescolar.ui.componentes.BarraSuperior
 import cl.duoc.huertoescolar.ui.componentes.CampoTexto
+import cl.duoc.huertoescolar.ui.componentes.DialogoConfirmacion
 import cl.duoc.huertoescolar.ui.componentes.SelectorOpciones
 import cl.duoc.huertoescolar.ui.componentes.SoloAdministrador
 
@@ -45,7 +53,8 @@ fun CultivoFormScreen(
     viewModel: CultivoFormViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val sectores by viewModel.sectores.collectAsState(initial = emptyList())
+    val sectores by viewModel.sectores.collectAsState()
+    var confirmarEliminar by remember { mutableStateOf(false) }
     LaunchedEffect(idCultivo) { viewModel.cargar(idCultivo) }
 
     SoloAdministrador(onVolver = onVolver) {
@@ -148,7 +157,37 @@ fun CultivoFormScreen(
                     Spacer(Modifier.width(8.dp))
                     Text("Guardar cultivo")
                 }
+
+                // Solo se puede eliminar un cultivo que ya existe
+                if (viewModel.esEdicion) {
+                    OutlinedButton(
+                        onClick = { confirmarEliminar = true },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Filled.Delete, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Eliminar cultivo")
+                    }
+                }
             }
+        }
+
+        if (confirmarEliminar) {
+            DialogoConfirmacion(
+                titulo = "¿Eliminar cultivo?",
+                mensaje = "Las tareas de este cultivo se mantienen, pero quedarán sin cultivo asociado.",
+                textoConfirmar = "Eliminar",
+                onConfirmar = {
+                    confirmarEliminar = false
+                    viewModel.eliminar { eliminado ->
+                        val texto = if (eliminado) "Cultivo eliminado" else "No se pudo eliminar el cultivo"
+                        Toast.makeText(context, texto, Toast.LENGTH_SHORT).show()
+                        if (eliminado) onVolver()
+                    }
+                },
+                onCancelar = { confirmarEliminar = false }
+            )
         }
     }
 }

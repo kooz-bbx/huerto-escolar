@@ -44,8 +44,8 @@ fun CultivosScreen(
     onEditarCultivo: (Int) -> Unit,
     viewModel: CultivosViewModel = viewModel()
 ) {
-    val cultivos by viewModel.cultivos.collectAsState(initial = emptyList())
-    val sectores by viewModel.sectores.collectAsState(initial = emptyList())
+    val cultivos by viewModel.cultivos.collectAsState()
+    val sectores by viewModel.sectores.collectAsState()
 
     Scaffold(
         topBar = { BarraSuperior(titulo = "Cultivos", onVolver = onVolver) },

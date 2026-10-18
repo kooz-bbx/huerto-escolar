@@ -2,17 +2,23 @@ package cl.duoc.huertoescolar.ui.sectores
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import cl.duoc.huertoescolar.data.local.HuertoDatabase
 import cl.duoc.huertoescolar.data.modelo.Cultivo
 import cl.duoc.huertoescolar.data.modelo.Sector
 import cl.duoc.huertoescolar.data.repositorio.HuertoRepositorio
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 
 class SectoresViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repositorio = HuertoRepositorio(HuertoDatabase.obtener(application))
 
-    // Listas que vienen de Room (se actualizan solas)
-    val sectores: Flow<List<Sector>> = repositorio.obtenerSectores()
-    val cultivos: Flow<List<Cultivo>> = repositorio.obtenerCultivos()
+    // StateFlow: estado que la pantalla observa. Viene de Room y se actualiza solo.
+    val sectores: StateFlow<List<Sector>> = repositorio.obtenerSectores()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val cultivos: StateFlow<List<Cultivo>> = repositorio.obtenerCultivos()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 }

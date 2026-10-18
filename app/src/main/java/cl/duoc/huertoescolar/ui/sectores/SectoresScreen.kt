@@ -40,11 +40,11 @@ import cl.duoc.huertoescolar.ui.componentes.colorEstadoSector
 fun SectoresScreen(
     onVolver: () -> Unit,
     onNuevoSector: () -> Unit,
-    onEditarSector: (Int) -> Unit,
+    onVerSector: (Int) -> Unit,
     viewModel: SectoresViewModel = viewModel()
 ) {
-    val sectores by viewModel.sectores.collectAsState(initial = emptyList())
-    val cultivos by viewModel.cultivos.collectAsState(initial = emptyList())
+    val sectores by viewModel.sectores.collectAsState()
+    val cultivos by viewModel.cultivos.collectAsState()
 
     Scaffold(
         topBar = { BarraSuperior(titulo = "Sectores del huerto", onVolver = onVolver) },
@@ -72,7 +72,7 @@ fun SectoresScreen(
                 TarjetaSector(
                     sector = sector,
                     cultivosAsociados = nombresCultivos,
-                    onClick = { onEditarSector(sector.id) },
+                    onClick = { onVerSector(sector.id) },
                     modifier = Modifier.animateItem()   // animación al agregar/mover
                 )
             }
