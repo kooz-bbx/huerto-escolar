@@ -6,12 +6,15 @@ import cl.duoc.huertoescolar.data.local.HuertoDatabase
 import cl.duoc.huertoescolar.data.modelo.Cultivo
 import cl.duoc.huertoescolar.data.modelo.EstadoTarea
 import cl.duoc.huertoescolar.data.modelo.Evidencia
+import cl.duoc.huertoescolar.data.modelo.LecturaSensor
+import cl.duoc.huertoescolar.data.modelo.Problema
 import cl.duoc.huertoescolar.data.modelo.ResultadoValidacion
 import cl.duoc.huertoescolar.data.modelo.Sector
 import cl.duoc.huertoescolar.data.modelo.Tarea
 import cl.duoc.huertoescolar.data.modelo.Usuario
 import cl.duoc.huertoescolar.data.modelo.Validacion
 import cl.duoc.huertoescolar.domain.fechaHoraActual
+import cl.duoc.huertoescolar.domain.generarLecturaSimulada
 import kotlinx.coroutines.flow.Flow
 
 // El repositorio es el único que habla con la base de datos.
@@ -29,6 +32,8 @@ class HuertoRepositorio(private val db: HuertoDatabase) {
             db.tareaDao().insertarTodas(DatosPrueba.tareas)
             db.evidenciaDao().insertarTodas(DatosPrueba.evidencias)
             db.validacionDao().insertarTodas(DatosPrueba.validaciones)
+            db.problemaDao().insertarTodos(DatosPrueba.problemas)
+            db.lecturaSensorDao().insertarTodas(DatosPrueba.lecturas)
         }
     }
 
@@ -166,5 +171,25 @@ class HuertoRepositorio(private val db: HuertoDatabase) {
             db.tareaDao().actualizar(tarea.copy(estado = nuevoEstado))
             true
         }
+    }
+
+    // ---------- Problemas ----------
+    fun obtenerProblemas(): Flow<List<Problema>> = db.problemaDao().obtenerTodos()
+
+    fun obtenerProblemasDeUsuario(idUsuario: Int): Flow<List<Problema>> =
+        db.problemaDao().obtenerDeUsuario(idUsuario)
+
+    suspend fun obtenerProblema(id: Int): Problema? = db.problemaDao().obtenerPorId(id)
+
+    suspend fun guardarProblema(problema: Problema) {
+        if (problema.id == 0) db.problemaDao().insertar(problema) else db.problemaDao().actualizar(problema)
+    }
+
+    // ---------- Sensores (simulados) ----------
+    fun obtenerLecturas(): Flow<List<LecturaSensor>> = db.lecturaSensorDao().obtenerTodas()
+
+    // Crea una lectura ficticia nueva para cada sector (no hay sensores reales)
+    suspend fun generarLecturasSimuladas(sectores: List<Sector>) {
+        db.lecturaSensorDao().insertarTodas(sectores.map { generarLecturaSimulada(it.id) })
     }
 }

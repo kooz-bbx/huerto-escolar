@@ -3,13 +3,18 @@ package cl.duoc.huertoescolar.data
 import cl.duoc.huertoescolar.data.modelo.Cultivo
 import cl.duoc.huertoescolar.data.modelo.EstadoCuenta
 import cl.duoc.huertoescolar.data.modelo.EstadoCultivo
+import cl.duoc.huertoescolar.data.modelo.EstadoLectura
+import cl.duoc.huertoescolar.data.modelo.EstadoProblema
 import cl.duoc.huertoescolar.data.modelo.EstadoSector
 import cl.duoc.huertoescolar.data.modelo.EstadoTarea
 import cl.duoc.huertoescolar.data.modelo.Evidencia
+import cl.duoc.huertoescolar.data.modelo.LecturaSensor
 import cl.duoc.huertoescolar.data.modelo.Perfil
+import cl.duoc.huertoescolar.data.modelo.Problema
 import cl.duoc.huertoescolar.data.modelo.ResultadoValidacion
 import cl.duoc.huertoescolar.data.modelo.Sector
 import cl.duoc.huertoescolar.data.modelo.Tarea
+import cl.duoc.huertoescolar.data.modelo.TipoProblema
 import cl.duoc.huertoescolar.data.modelo.TipoTarea
 import cl.duoc.huertoescolar.data.modelo.Usuario
 import cl.duoc.huertoescolar.data.modelo.Validacion
@@ -103,5 +108,28 @@ object DatosPrueba {
             resultado = ResultadoValidacion.APROBADA, comentario = "¡Excelente trabajo!"),
         Validacion(2, tareaId = 5, evidenciaId = 3, validadorId = 2, fechaHora = fechaRelativa(0) + " 08:30",
             resultado = ResultadoValidacion.RECHAZADA, comentario = "Faltó guardar las palas en el estante. Repetir, por favor.")
+    )
+
+    val problemas = listOf(
+        Problema(
+            id = 1, sectorId = 3, cultivoId = 5, tipo = TipoProblema.DANO_PLANTA,
+            descripcion = "Varias hojas de menta están amarillas y secas.",
+            fechaReporte = fechaRelativa(-2) + " 10:40", reportadoPorId = 5
+        ),
+        Problema(
+            id = 2, sectorId = 1, tipo = TipoProblema.DETERIORO_SECTOR,
+            descripcion = "Una tabla del bancal norte está suelta.",
+            fechaReporte = fechaRelativa(-6) + " 12:10", reportadoPorId = 3,
+            estado = EstadoProblema.CERRADO, comentarioDocente = "Se cambió la tabla.",
+            fechaCierre = fechaRelativa(-4) + " 09:30"
+        )
+    )
+
+    // Lecturas iniciales SIMULADAS (origen: simulación académica)
+    val lecturas = listOf(
+        LecturaSensor(sectorId = 1, fechaHora = fechaRelativa(0) + " 08:00", humedadSuelo = 55, temperatura = 16.5, humedadAmbiente = 62),
+        LecturaSensor(sectorId = 2, fechaHora = fechaRelativa(0) + " 08:00", humedadSuelo = 70, temperatura = 24.0, humedadAmbiente = 75),
+        LecturaSensor(sectorId = 3, fechaHora = fechaRelativa(0) + " 08:00", humedadSuelo = 22, temperatura = 18.2, humedadAmbiente = 50, estado = EstadoLectura.BAJO),
+        LecturaSensor(sectorId = 4, fechaHora = fechaRelativa(0) + " 08:00", humedadSuelo = 48, temperatura = 15.1, humedadAmbiente = 58)
     )
 }
