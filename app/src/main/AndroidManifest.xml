@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permiso para mostrar recordatorios como notificaciones (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- La cámara es opcional: la app también funciona en equipos sin cámara (se usa la galería) -->
     <uses-feature
         android:name="android.hardware.camera"
