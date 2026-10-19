@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cl.duoc.huertoescolar.data.Sesion
 import cl.duoc.huertoescolar.data.local.HuertoDatabase
+import cl.duoc.huertoescolar.data.modelo.Problema
 import cl.duoc.huertoescolar.data.modelo.Sector
 import cl.duoc.huertoescolar.data.modelo.Tarea
 import cl.duoc.huertoescolar.data.modelo.Usuario
@@ -21,6 +22,11 @@ class InicioEstudianteViewModel(application: Application) : AndroidViewModel(app
     // Solo las tareas del estudiante que inició sesión (o de su grupo)
     val misTareas: StateFlow<List<Tarea>> =
         (Sesion.usuarioActual?.let { repositorio.obtenerTareasDeEstudiante(it) } ?: emptyFlow())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // Problemas que reportó este estudiante (para ver el seguimiento del docente)
+    val misProblemas: StateFlow<List<Problema>> =
+        (Sesion.usuarioActual?.let { repositorio.obtenerProblemasDeUsuario(it.id) } ?: emptyFlow())
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val sectores: StateFlow<List<Sector>> = repositorio.obtenerSectores()

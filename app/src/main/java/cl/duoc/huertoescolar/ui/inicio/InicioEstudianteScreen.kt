@@ -4,14 +4,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,13 +34,16 @@ import cl.duoc.huertoescolar.data.modelo.EstadoTarea
 import cl.duoc.huertoescolar.domain.estadoMostrado
 import cl.duoc.huertoescolar.domain.ordenarPorFecha
 import cl.duoc.huertoescolar.ui.componentes.BarraSuperior
+import cl.duoc.huertoescolar.ui.componentes.BotonNotificar
 import cl.duoc.huertoescolar.ui.componentes.TarjetaSaludo
+import cl.duoc.huertoescolar.ui.problemas.TarjetaProblema
 import cl.duoc.huertoescolar.ui.tareas.TarjetaTarea
 import cl.duoc.huertoescolar.ui.tareas.textoResponsable
 
 @Composable
 fun InicioEstudianteScreen(
     onVerTarea: (Int) -> Unit,
+    onReportarProblema: () -> Unit,
     onCerrarSesion: () -> Unit,
     viewModel: InicioEstudianteViewModel = viewModel()
 ) {
@@ -44,6 +51,7 @@ fun InicioEstudianteScreen(
     val tareas by viewModel.misTareas.collectAsState()
     val sectores by viewModel.sectores.collectAsState()
     val usuarios by viewModel.usuarios.collectAsState()
+    val misProblemas by viewModel.misProblemas.collectAsState()
 
     val misTareas = ordenarPorFecha(tareas)
     val porHacer = misTareas.count {
@@ -52,15 +60,31 @@ fun InicioEstudianteScreen(
                 estado == EstadoTarea.ATRASADA || estado == EstadoTarea.RECHAZADA
     }
 
+    // Texto del recordatorio: la próxima tarea por hacer
+    val proxima = misTareas.firstOrNull {
+        val estado = estadoMostrado(it)
+        estado != EstadoTarea.VALIDADA && estado != EstadoTarea.PENDIENTE_VALIDACION
+    }
+    val textoRecordatorio = if (proxima == null) "No tienes tareas por hacer. ¡Bien hecho!"
+    else "Tienes $porHacer tarea(s) por hacer. Próxima: ${proxima.tipo.etiqueta} el ${proxima.fechaProgramada}"
+
     Scaffold(
         topBar = {
             BarraSuperior(
                 titulo = "Mi huerto",
                 acciones = {
+                    BotonNotificar(titulo = "Recordatorio del huerto", texto = textoRecordatorio)
                     IconButton(onClick = onCerrarSesion) {
                         Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Cerrar sesión")
                     }
                 }
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = onReportarProblema,
+                icon = { Icon(Icons.Filled.ReportProblem, contentDescription = null) },
+                text = { Text("Reportar problema") }
             )
         }
     ) { innerPadding ->
@@ -108,6 +132,23 @@ fun InicioEstudianteScreen(
                     modifier = Modifier.animateItem()
                 )
             }
+
+            // Seguimiento de los problemas que reporté
+            if (misProblemas.isNotEmpty()) {
+                item {
+                    Text("Mis reportes de problemas", style = MaterialTheme.typography.titleMedium)
+                }
+                items(misProblemas, key = { "problema_${it.id}" }) { problema ->
+                    TarjetaProblema(
+                        problema = problema,
+                        nombreSector = sectores.find { it.id == problema.sectorId }?.nombre ?: "",
+                        nombreReportante = "mí",
+                        onClick = null
+                    )
+                }
+            }
+            // Espacio para que el botón flotante no tape la última tarjeta
+            item { Spacer(Modifier.height(72.dp)) }
         }
     }
 }

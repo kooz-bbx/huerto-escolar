@@ -11,6 +11,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.ReportProblem
+import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Yard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +45,10 @@ fun InicioAdminScreen(
     onIrSectores: () -> Unit,
     onIrCultivos: () -> Unit,
     onIrTareas: () -> Unit,
+    onIrProblemas: () -> Unit,
+    onIrAlertas: () -> Unit,
+    onIrSensores: () -> Unit,
+    onIrHistorial: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     val usuario = Sesion.usuarioActual
@@ -48,7 +56,11 @@ fun InicioAdminScreen(
     val opciones = listOf(
         OpcionMenu("Sectores", "Bancales y zonas del huerto", Icons.Filled.Yard, onIrSectores),
         OpcionMenu("Cultivos", "Siembra, riego y cosecha", Icons.Filled.Eco, onIrCultivos),
-        OpcionMenu("Tareas", "Asignar, revisar y validar", Icons.AutoMirrored.Filled.Assignment, onIrTareas)
+        OpcionMenu("Tareas", "Asignar, revisar y validar", Icons.AutoMirrored.Filled.Assignment, onIrTareas),
+        OpcionMenu("Problemas", "Reportes y seguimiento", Icons.Filled.ReportProblem, onIrProblemas),
+        OpcionMenu("Alertas", "Riegos, atrasos y cosechas", Icons.Filled.NotificationsActive, onIrAlertas),
+        OpcionMenu("Sensores", "Datos simulados", Icons.Filled.Sensors, onIrSensores),
+        OpcionMenu("Historial", "Actividades y validaciones", Icons.Filled.History, onIrHistorial)
     )
 
     Scaffold(
@@ -99,6 +111,9 @@ fun InicioAdminScreen(
 @Composable
 fun PreviewInicioAdmin() {
     HuertoEscolarTheme {
-        InicioAdminScreen(onIrSectores = {}, onIrCultivos = {}, onIrTareas = {}, onCerrarSesion = {})
+        InicioAdminScreen(
+            onIrSectores = {}, onIrCultivos = {}, onIrTareas = {}, onIrProblemas = {},
+            onIrAlertas = {}, onIrSensores = {}, onIrHistorial = {}, onCerrarSesion = {}
+        )
     }
 }

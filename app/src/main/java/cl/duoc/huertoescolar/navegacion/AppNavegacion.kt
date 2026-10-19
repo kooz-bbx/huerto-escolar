@@ -13,14 +13,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cl.duoc.huertoescolar.data.Sesion
+import cl.duoc.huertoescolar.ui.alertas.AlertasScreen
 import cl.duoc.huertoescolar.ui.cultivos.CultivoFormScreen
 import cl.duoc.huertoescolar.ui.cultivos.CultivosScreen
+import cl.duoc.huertoescolar.ui.historial.HistorialScreen
 import cl.duoc.huertoescolar.ui.inicio.InicioAdminScreen
 import cl.duoc.huertoescolar.ui.inicio.InicioEstudianteScreen
 import cl.duoc.huertoescolar.ui.login.LoginScreen
+import cl.duoc.huertoescolar.ui.problemas.ProblemaDetalleScreen
+import cl.duoc.huertoescolar.ui.problemas.ProblemaFormScreen
+import cl.duoc.huertoescolar.ui.problemas.ProblemasScreen
 import cl.duoc.huertoescolar.ui.sectores.SectorDetalleScreen
 import cl.duoc.huertoescolar.ui.sectores.SectorFormScreen
 import cl.duoc.huertoescolar.ui.sectores.SectoresScreen
+import cl.duoc.huertoescolar.ui.sensores.SensoresScreen
 import cl.duoc.huertoescolar.ui.tareas.TareaDetalleScreen
 import cl.duoc.huertoescolar.ui.tareas.TareaFormScreen
 import cl.duoc.huertoescolar.ui.tareas.TareasScreen
@@ -53,12 +59,17 @@ fun AppNavegacion() {
                 onIrSectores = { navController.navigate(Rutas.SECTORES) },
                 onIrCultivos = { navController.navigate(Rutas.CULTIVOS) },
                 onIrTareas = { navController.navigate(Rutas.TAREAS) },
+                onIrProblemas = { navController.navigate(Rutas.PROBLEMAS) },
+                onIrAlertas = { navController.navigate(Rutas.ALERTAS) },
+                onIrSensores = { navController.navigate(Rutas.SENSORES) },
+                onIrHistorial = { navController.navigate(Rutas.HISTORIAL) },
                 onCerrarSesion = { cerrarSesion(navController) }
             )
         }
         composable(Rutas.INICIO_ESTUDIANTE) {
             InicioEstudianteScreen(
                 onVerTarea = { id -> navController.navigate(Rutas.tareaDetalle(id)) },
+                onReportarProblema = { navController.navigate(Rutas.PROBLEMA_FORM) },
                 onCerrarSesion = { cerrarSesion(navController) }
             )
         }
@@ -120,6 +131,28 @@ fun AppNavegacion() {
                 onEditarTarea = { id -> navController.navigate(Rutas.tareaForm(id)) }
             )
         }
+
+        // ---------- Problemas ----------
+        composable(Rutas.PROBLEMAS) {
+            ProblemasScreen(
+                onVolver = volver,
+                onVerProblema = { id -> navController.navigate(Rutas.problemaDetalle(id)) }
+            )
+        }
+        composable(Rutas.PROBLEMA_FORM) {
+            ProblemaFormScreen(onVolver = volver)
+        }
+        composable(Rutas.PROBLEMA_DETALLE, arguments = argumentoId) { entrada ->
+            ProblemaDetalleScreen(
+                idProblema = entrada.arguments?.getInt("id") ?: 0,
+                onVolver = volver
+            )
+        }
+
+        // ---------- Alertas, sensores e historial ----------
+        composable(Rutas.ALERTAS) { AlertasScreen(onVolver = volver) }
+        composable(Rutas.SENSORES) { SensoresScreen(onVolver = volver) }
+        composable(Rutas.HISTORIAL) { HistorialScreen(onVolver = volver) }
     }
 }
 

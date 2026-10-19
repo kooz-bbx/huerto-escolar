@@ -13,6 +13,12 @@ object Rutas {
     const val TAREAS = "tareas"
     const val TAREA_FORM = "tarea_form/{id}"
     const val TAREA_DETALLE = "tarea_detalle/{id}"
+    const val PROBLEMAS = "problemas"
+    const val PROBLEMA_FORM = "problema_form"
+    const val PROBLEMA_DETALLE = "problema_detalle/{id}"
+    const val ALERTAS = "alertas"
+    const val SENSORES = "sensores"
+    const val HISTORIAL = "historial"
 
     // Funciones para armar la ruta con el id (0 = crear uno nuevo)
     fun sectorDetalle(id: Int) = "sector_detalle/$id"
@@ -20,4 +26,5 @@ object Rutas {
     fun cultivoForm(id: Int) = "cultivo_form/$id"
     fun tareaForm(id: Int) = "tarea_form/$id"
     fun tareaDetalle(id: Int) = "tarea_detalle/$id"
+    fun problemaDetalle(id: Int) = "problema_detalle/$id"
 }
