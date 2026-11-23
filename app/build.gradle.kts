@@ -67,4 +67,8 @@ dependencies {
 
     // Coil: mostrar fotos desde una Uri (igual que en FotoMotion)
     implementation(libs.coil.compose)
+
+    // Retrofit: consumo del microservicio Spring Boot y de la API del clima (JSON con Gson)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
 }

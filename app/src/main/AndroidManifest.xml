@@ -5,6 +5,9 @@
     <!-- Permiso para mostrar recordatorios como notificaciones (Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Internet: para conectarse al microservicio Spring Boot y a la API del clima -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- La cámara es opcional: la app también funciona en equipos sin cámara (se usa la galería) -->
     <uses-feature
         android:name="android.hardware.camera"
@@ -18,7 +21,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HuertoEscolar">
+        android:theme="@style/Theme.HuertoEscolar"
+        android:usesCleartextTraffic="true">
+        <!-- usesCleartextTraffic: el backend local usa http (sin s) en http://10.0.2.2:8080 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
