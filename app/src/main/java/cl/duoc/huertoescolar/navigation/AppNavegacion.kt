@@ -1,4 +1,4 @@
-package cl.duoc.huertoescolar.navegacion
+package cl.duoc.huertoescolar.navigation
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -12,24 +12,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import cl.duoc.huertoescolar.data.Sesion
-import cl.duoc.huertoescolar.ui.alertas.AlertasScreen
-import cl.duoc.huertoescolar.ui.cultivos.CultivoFormScreen
-import cl.duoc.huertoescolar.ui.cultivos.CultivosScreen
-import cl.duoc.huertoescolar.ui.historial.HistorialScreen
-import cl.duoc.huertoescolar.ui.inicio.InicioAdminScreen
-import cl.duoc.huertoescolar.ui.inicio.InicioEstudianteScreen
-import cl.duoc.huertoescolar.ui.login.LoginScreen
-import cl.duoc.huertoescolar.ui.problemas.ProblemaDetalleScreen
-import cl.duoc.huertoescolar.ui.problemas.ProblemaFormScreen
-import cl.duoc.huertoescolar.ui.problemas.ProblemasScreen
-import cl.duoc.huertoescolar.ui.sectores.SectorDetalleScreen
-import cl.duoc.huertoescolar.ui.sectores.SectorFormScreen
-import cl.duoc.huertoescolar.ui.sectores.SectoresScreen
-import cl.duoc.huertoescolar.ui.sensores.SensoresScreen
-import cl.duoc.huertoescolar.ui.tareas.TareaDetalleScreen
-import cl.duoc.huertoescolar.ui.tareas.TareaFormScreen
-import cl.duoc.huertoescolar.ui.tareas.TareasScreen
+import cl.duoc.huertoescolar.model.Sesion
+import cl.duoc.huertoescolar.ui.screen.alertas.AlertasScreen
+import cl.duoc.huertoescolar.ui.screen.cultivos.CultivoFormScreen
+import cl.duoc.huertoescolar.ui.screen.cultivos.CultivosScreen
+import cl.duoc.huertoescolar.ui.screen.historial.HistorialScreen
+import cl.duoc.huertoescolar.ui.screen.inicio.InicioAdminScreen
+import cl.duoc.huertoescolar.ui.screen.inicio.InicioEstudianteScreen
+import cl.duoc.huertoescolar.ui.screen.login.LoginScreen
+import cl.duoc.huertoescolar.ui.screen.problemas.ProblemaDetalleScreen
+import cl.duoc.huertoescolar.ui.screen.problemas.ProblemaFormScreen
+import cl.duoc.huertoescolar.ui.screen.problemas.ProblemasScreen
+import cl.duoc.huertoescolar.ui.screen.sectores.SectorDetalleScreen
+import cl.duoc.huertoescolar.ui.screen.sectores.SectorFormScreen
+import cl.duoc.huertoescolar.ui.screen.sectores.SectoresScreen
+import cl.duoc.huertoescolar.ui.screen.sensores.SensoresScreen
+import cl.duoc.huertoescolar.ui.screen.tareas.TareaDetalleScreen
+import cl.duoc.huertoescolar.ui.screen.tareas.TareaFormScreen
+import cl.duoc.huertoescolar.ui.screen.tareas.TareasScreen
 
 // Argumento "id" (número) que usan las rutas de detalle y formularios
 private val argumentoId = listOf(navArgument("id") { type = NavType.IntType })

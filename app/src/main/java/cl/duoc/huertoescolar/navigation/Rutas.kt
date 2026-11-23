@@ -1,4 +1,4 @@
-package cl.duoc.huertoescolar.navegacion
+package cl.duoc.huertoescolar.navigation
 
 // Nombres de las rutas (pantallas) de la app
 object Rutas {

@@ -1,4 +1,4 @@
-package cl.duoc.huertoescolar.util
+package cl.duoc.huertoescolar.utils
 
 import android.content.Context
 import android.net.Uri
