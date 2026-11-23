@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Llave de firma del APK: NUNCA se sube a GitHub
+*.jks
+*.keystore
+/app/release
