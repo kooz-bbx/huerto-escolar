@@ -1,0 +1,155 @@
+package cl.duoc.huertoescolar.ui.screen.inicio
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.ReportProblem
+import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cl.duoc.huertoescolar.model.Sesion
+import cl.duoc.huertoescolar.model.data.local.entity.EstadoTarea
+import cl.duoc.huertoescolar.model.rules.estadoMostrado
+import cl.duoc.huertoescolar.model.rules.ordenarPorFecha
+import cl.duoc.huertoescolar.ui.components.BarraSuperior
+import cl.duoc.huertoescolar.ui.components.BotonNotificar
+import cl.duoc.huertoescolar.ui.components.TarjetaSaludo
+import cl.duoc.huertoescolar.ui.screen.problemas.TarjetaProblema
+import cl.duoc.huertoescolar.ui.screen.tareas.TarjetaTarea
+import cl.duoc.huertoescolar.viewmodel.InicioEstudianteViewModel
+import cl.duoc.huertoescolar.viewmodel.textoResponsable
+
+@Composable
+fun InicioEstudianteScreen(
+    onVerTarea: (Int) -> Unit,
+    onReportarProblema: () -> Unit,
+    onCerrarSesion: () -> Unit,
+    viewModel: InicioEstudianteViewModel = viewModel()
+) {
+    val usuario = Sesion.usuarioActual
+    val tareas by viewModel.misTareas.collectAsState()
+    val sectores by viewModel.sectores.collectAsState()
+    val usuarios by viewModel.usuarios.collectAsState()
+    val misProblemas by viewModel.misProblemas.collectAsState()
+
+    val misTareas = ordenarPorFecha(tareas)
+    val porHacer = misTareas.count {
+        val estado = estadoMostrado(it)
+        estado == EstadoTarea.PENDIENTE || estado == EstadoTarea.EN_DESARROLLO ||
+                estado == EstadoTarea.ATRASADA || estado == EstadoTarea.RECHAZADA
+    }
+
+    // Texto del recordatorio: la próxima tarea por hacer
+    val proxima = misTareas.firstOrNull {
+        val estado = estadoMostrado(it)
+        estado != EstadoTarea.VALIDADA && estado != EstadoTarea.PENDIENTE_VALIDACION
+    }
+    val textoRecordatorio = if (proxima == null) "No tienes tareas por hacer. ¡Bien hecho!"
+    else "Tienes $porHacer tarea(s) por hacer. Próxima: ${proxima.tipo.etiqueta} el ${proxima.fechaProgramada}"
+
+    Scaffold(
+        topBar = {
+            BarraSuperior(
+                titulo = "Mi huerto",
+                acciones = {
+                    BotonNotificar(titulo = "Recordatorio del huerto", texto = textoRecordatorio)
+                    IconButton(onClick = onCerrarSesion) {
+                        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Cerrar sesión")
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = onReportarProblema,
+                icon = { Icon(Icons.Filled.ReportProblem, contentDescription = null) },
+                text = { Text("Reportar problema") }
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                TarjetaSaludo(
+                    nombre = usuario?.nombre ?: "Estudiante",
+                    detalle = "Estudiante · ${usuario?.grupo ?: ""}\nTienes $porHacer tarea(s) por hacer"
+                )
+            }
+            item {
+                Text("Mis tareas", style = MaterialTheme.typography.titleMedium)
+            }
+            if (misTareas.isEmpty()) {
+                item {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(Icons.Filled.Spa, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Text(
+                                text = "No tienes tareas asignadas por ahora.",
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            }
+            items(misTareas, key = { it.id }) { tarea ->
+                val sector = sectores.find { it.id == tarea.sectorId }
+                TarjetaTarea(
+                    tarea = tarea,
+                    nombreSector = sector?.let { "${it.codigo} · ${it.nombre}" } ?: "",
+                    nombreResponsable = textoResponsable(tarea, usuarios),
+                    onClick = { onVerTarea(tarea.id) },
+                    modifier = Modifier.animateItem()
+                )
+            }
+
+            // Seguimiento de los problemas que reporté
+            if (misProblemas.isNotEmpty()) {
+                item {
+                    Text("Mis reportes de problemas", style = MaterialTheme.typography.titleMedium)
+                }
+                items(misProblemas, key = { "problema_${it.id}" }) { problema ->
+                    TarjetaProblema(
+                        problema = problema,
+                        nombreSector = sectores.find { it.id == problema.sectorId }?.nombre ?: "",
+                        nombreReportante = "mí",
+                        onClick = null
+                    )
+                }
+            }
+            // Espacio para que el botón flotante no tape la última tarjeta
+            item { Spacer(Modifier.height(72.dp)) }
+        }
+    }
+}
